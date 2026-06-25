@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mohamed Al Thameem M — Full-Stack Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Bebas+Neue&family=Oxanium:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0a0c0a;
+    --bg1:       #0d110d;
+    --bg2:       #111611;
+    --bg3:       #161d16;
+    --green:     #00ff41;
+    --green-dim: #00c832;
+    --green-glow:#00ff4133;
+    --cyan:      #00e5ff;
+    --cyan-dim:  #00b8cc;
+    --cyan-glow: #00e5ff22;
+    --amber:     #ffb300;
+    --amber-dim: #cc8f00;
+    --amber-glow:#ffb30022;
+    --red:       #ff3131;
+    --text:      #c8d8c8;
+    --text-dim:  #6a8a6a;
+    --border:    #1e2e1e;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-disp: 'Bebas Neue', sans-serif;
+    --font-ui:   'Oxanium', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── SCANLINES overlay ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ══════════════════════════
+     BIOS BOOT SCREEN
+  ══════════════════════════ */
+  #bios {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 60px 80px;
+    font-family: var(--font-mono);
+    overflow: hidden;
+  }
+  #bios-content { max-width: 700px; width: 100%; }
+  #bios .bios-line {
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0;
+    border-right: none;
+  }
+  #bios .bios-line.green  { color: var(--green); }
+  #bios .bios-line.cyan   { color: var(--cyan); }
+  #bios .bios-line.amber  { color: var(--amber); }
+  #bios .bios-line.red    { color: var(--red); }
+  #bios .bios-line.dim    { color: var(--text-dim); }
+  #bios-bar {
+    height: 18px;
+    background: var(--green);
+    width: 0%;
+    margin-top: 20px;
+    transition: width 0.05s linear;
+    box-shadow: 0 0 12px var(--green);
+  }
+  #bios-bar-label {
+    color: var(--text-dim);
+    font-size: 12px;
+    margin-top: 6px;
+  }
+  #bios-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: var(--green);
+    animation: blink 0.6s step-end infinite;
+    vertical-align: middle;
+    margin-left: 2px;
+    box-shadow: 0 0 6px var(--green);
+  }
+
+  /* ══════════════════════════
+     NAVBAR
+  ══════════════════════════ */
+  #navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 46px;
+    background: rgba(10,12,10,0.92);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  #navbar.visible { opacity: 1; }
+  .nav-brand {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green);
+    letter-spacing: 0.12em;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-brand::before {
+    content: '▶';
+    font-size: 10px;
+    color: var(--cyan);
+  }
+  .nav-links {
+    display: flex; gap: 0; align-items: center;
+  }
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.08em;
+    padding: 0 14px;
+    height: 46px;
+    display: flex; align-items: center;
+    border-left: 1px solid var(--border);
+    transition: color 0.2s, background 0.2s;
+  }
+  .nav-links a:hover {
+    color: var(--green);
+    background: var(--green-glow);
+  }
+  .nav-links a .prefix { color: var(--green-dim); margin-right: 4px; }
+  #nav-clock {
+    font-size: 11px;
+    color: var(--amber);
+    letter-spacing: 0.1em;
+    border-left: 1px solid var(--border);
+    padding-left: 14px;
+    font-family: var(--font-mono);
+  }
+
+  /* ══════════════════════════
+     SECTIONS COMMON
+  ══════════════════════════ */
+  section {
+    padding: 100px 0 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+  .section-label {
+    font-size: 11px;
+    color: var(--green-dim);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::before {
+    content: '//';
+    color: var(--text-dim);
+  }
+  .section-title {
+    font-family: var(--font-disp);
+    font-size: clamp(42px, 6vw, 72px);
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: #fff;
+    margin-bottom: 48px;
+  }
+  .section-title span { color: var(--green); }
+  .sep {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0 40px;
+  }
+
+  /* ══════════════════════════
+     HERO
+  ══════════════════════════ */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 120px;
+    padding-bottom: 80px;
+    position: relative;
+    max-width: 100%;
+    padding-left: 80px;
+    padding-right: 80px;
+    overflow: hidden;
+  }
+  #hero::before {
+    content: '';
+    position: absolute;
+    top: 20%; right: -10%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, var(--green-glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-prompt {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin-bottom: 16px;
+    letter-spacing: 0.05em;
+  }
+  .hero-prompt span { color: var(--green); }
+  .hero-name {
+    font-family: var(--font-disp);
+    font-size: clamp(56px, 9vw, 110px);
+    letter-spacing: 0.02em;
+    line-height: 1;
+    color: #fff;
+    position: relative;
+    display: inline-block;
+  }
+  .hero-name.glitch {
+    animation: glitch 4s infinite;
+  }
+  .hero-name::before,
+  .hero-name::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    font-family: var(--font-disp);
+    font-size: inherit;
+    letter-spacing: inherit;
+  }
+  .hero-name::before {
+    color: var(--cyan);
+    clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
+    animation: glitch-top 4s infinite;
+    left: -2px;
+  }
+  .hero-name::after {
+    color: var(--amber);
+    clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+    animation: glitch-bot 4s infinite;
+    left: 2px;
+  }
+  .hero-role {
+    font-family: var(--font-ui);
+    font-size: clamp(16px, 2.5vw, 22px);
+    font-weight: 300;
+    color: var(--cyan);
+    letter-spacing: 0.2em;
+    margin-top: 12px;
+    margin-bottom: 40px;
+  }
+  .hero-terminal {
+    background: var(--bg1);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    max-width: 640px;
+    overflow: hidden;
+    box-shadow: 0 0 40px rgba(0,255,65,0.05);
+  }
+  .term-titlebar {
+    background: var(--bg2);
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .term-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+  .term-dot.r { background: #ff5f57; }
+  .term-dot.y { background: #ffbd2e; }
+  .term-dot.g { background: #28c840; }
+  .term-title {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-left: 8px;
+    letter-spacing: 0.05em;
+  }
+  .term-body {
+    padding: 20px;
+    font-size: 13px;
+    line-height: 2;
+    min-height: 180px;
+  }
+  .term-line { display: flex; gap: 8px; }
+  .term-ps1 { color: var(--green); white-space: nowrap; }
+  .term-ps1 .at { color: var(--cyan); }
+  .term-ps1 .path { color: var(--amber); }
+  #typing-output { color: var(--text); }
+  #typing-cursor {
+    display: inline-block;
+    width: 7px; height: 14px;
+    background: var(--green);
+    animation: blink 0.7s step-end infinite;
+    vertical-align: text-bottom;
+    box-shadow: 0 0 5px var(--green);
+  }
+  .hero-links {
+    display: flex; gap: 16px;
+    margin-top: 40px; flex-wrap: wrap;
+  }
+  .btn {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    padding: 11px 24px;
+    border-radius: 3px;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .btn-green {
+    background: transparent;
+    border: 1px solid var(--green);
+    color: var(--green);
+  }
+  .btn-green:hover {
+    background: var(--green-glow);
+    box-shadow: 0 0 20px var(--green-glow);
+  }
+  .btn-cyan {
+    background: transparent;
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+  }
+  .btn-cyan:hover {
+    background: var(--cyan-glow);
+    box-shadow: 0 0 20px var(--cyan-glow);
+  }
+  .hero-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 50px 50px;
+    opacity: 0.3;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
+  }
+
+  /* ══════════════════════════
+     SKILLS
+  ══════════════════════════ */
+  #skills { background: transparent; }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .skill-card {
+    background: var(--bg1);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .skill-card.c-green::before { background: var(--green); box-shadow: 0 0 10px var(--green); }
+  .skill-card.c-cyan::before  { background: var(--cyan);  box-shadow: 0 0 10px var(--cyan);  }
+  .skill-card.c-amber::before { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+  .skill-card:hover {
+    transform: translateY(-3px);
+    border-color: #2e3e2e;
+  }
+  .skill-card-cat {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    font-family: var(--font-ui);
+    font-weight: 600;
+  }
+  .skill-card.c-green .skill-card-cat { color: var(--green); }
+  .skill-card.c-cyan  .skill-card-cat { color: var(--cyan);  }
+  .skill-card.c-amber .skill-card-cat { color: var(--amber); }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .skill-tag {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font-mono);
+    transition: all 0.2s;
+  }
+  .skill-card:hover .skill-tag {
+    border-color: #2e3e2e;
+    color: #dfe;
+  }
+
+  /* ══════════════════════════
+     EXPERIENCE / TIMELINE
+  ══════════════════════════ */
+  #experience { }
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, var(--green) 0%, var(--cyan) 50%, var(--amber) 100%);
+    opacity: 0.4;
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 40px;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -28px; top: 6px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green);
+    border: 2px solid var(--bg);
+  }
+  .timeline-item.c-cyan::before  { background: var(--cyan);  box-shadow: 0 0 10px var(--cyan);  }
+  .timeline-item.c-amber::before { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+  .tl-date {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+    font-family: var(--font-mono);
+  }
+  .tl-title {
+    font-family: var(--font-ui);
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  .tl-org {
+    font-size: 12px;
+    color: var(--cyan);
+    margin-bottom: 10px;
+    letter-spacing: 0.05em;
+  }
+  .tl-note {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+  .tl-badge {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    background: var(--green-glow);
+    border: 1px solid var(--green-dim);
+    color: var(--green);
+    margin-top: 8px;
+    font-family: var(--font-mono);
+  }
+
+  /* ══════════════════════════
+     PROJECTS
+  ══════════════════════════ */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .project-card {
+    background: var(--bg1);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s;
+    position: relative;
+  }
+  .project-card:hover {
+    transform: translateY(-4px);
+    border-color: #1e3e1e;
+  }
+  .project-card-header {
+    padding: 20px 24px 0;
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .project-num {
+    font-size: 36px;
+    font-family: var(--font-disp);
+    color: var(--border);
+    line-height: 1;
+  }
+  .project-icon {
+    font-size: 22px;
+  }
+  .project-card-body { padding: 12px 24px 24px; }
+  .project-name {
+    font-family: var(--font-ui);
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .project-desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+  .project-stack { display: flex; flex-wrap: wrap; gap: 6px; }
+  .stack-tag {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+  }
+  .stack-tag.g { background: var(--green-glow); color: var(--green); border: 1px solid #004d18; }
+  .stack-tag.c { background: var(--cyan-glow);  color: var(--cyan);  border: 1px solid #004d66; }
+  .stack-tag.a { background: var(--amber-glow); color: var(--amber); border: 1px solid #4d3600; }
+
+  /* ══════════════════════════
+     CONTACT / TERMINAL
+  ══════════════════════════ */
+  #contact-terminal {
+    background: var(--bg1);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    max-width: 760px;
+    margin: 0 auto;
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(0,255,65,0.04);
+  }
+  #ct-titlebar {
+    background: var(--bg2);
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  #ct-body {
+    padding: 24px;
+    min-height: 340px;
+    max-height: 460px;
+    overflow-y: auto;
+    font-size: 13px;
+    line-height: 2;
+  }
+  #ct-body::-webkit-scrollbar { width: 4px; }
+  #ct-body::-webkit-scrollbar-track { background: transparent; }
+  #ct-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .ct-out { color: var(--text); margin-bottom: 2px; }
+  .ct-out.g { color: var(--green); }
+  .ct-out.c { color: var(--cyan); }
+  .ct-out.a { color: var(--amber); }
+  .ct-out.d { color: var(--text-dim); }
+  .ct-out.r { color: var(--red); }
+  #ct-input-row {
+    display: flex; align-items: center; gap: 8px;
+    border-top: 1px solid var(--border);
+    padding: 14px 24px;
+    background: var(--bg2);
+  }
+  .ct-ps1 { color: var(--green); white-space: nowrap; font-size: 13px; }
+  .ct-ps1 .at { color: var(--cyan); }
+  .ct-ps1 .path { color: var(--amber); }
+  #ct-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    flex: 1;
+    caret-color: var(--green);
+  }
+
+  /* ══════════════════════════
+     FOOTER
+  ══════════════════════════ */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 80px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    flex-wrap: wrap; gap: 12px;
+  }
+  footer span { color: var(--green); }
+
+  /* ══════════════════════════
+     ANIMATIONS
+  ══════════════════════════ */
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+  @keyframes glitch {
+    0%, 90%, 100% { transform: translate(0); }
+    91%           { transform: translate(-2px, 1px); }
+    93%           { transform: translate(2px, -1px); }
+    95%           { transform: translate(-1px, 2px); }
+    97%           { transform: translate(1px, -2px); }
+  }
+  @keyframes glitch-top {
+    0%, 90%, 100%  { transform: translate(0); opacity: 0; }
+    91%, 94%       { transform: translate(-3px, 0); opacity: 0.6; }
+    92%, 93%       { transform: translate(3px, 0);  opacity: 0.6; }
+    95%, 100%      { opacity: 0; }
+  }
+  @keyframes glitch-bot {
+    0%, 88%, 100%  { transform: translate(0); opacity: 0; }
+    89%, 92%       { transform: translate(3px, 0); opacity: 0.5; }
+    90%, 91%       { transform: translate(-3px, 0); opacity: 0.5; }
+    93%, 100%      { opacity: 0; }
+  }
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .reveal { opacity: 0; }
+  .reveal.visible {
+    animation: fadeSlideIn 0.55s ease forwards;
+  }
+
+  /* ══════════════════════════
+     RESPONSIVE
+  ══════════════════════════ */
+  @media (max-width: 700px) {
+    #hero { padding-left: 24px; padding-right: 24px; }
+    section { padding-left: 24px; padding-right: 24px; }
+    footer { padding: 24px; }
+    .nav-links a { display: none; }
+    .nav-links a:last-child { display: flex; }
+    .hero-name { font-size: 48px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-name, .hero-name::before, .hero-name::after { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ BIOS BOOT SCREEN ══ -->
+<div id="bios">
+  <div id="bios-content">
+    <div class="bios-line green" id="b0">ALTHAMEEM-OS v2.0  |  64-bit  |  UEFI Secure Boot</div>
+    <div class="bios-line dim"   id="b1">Copyright (C) 2024–2026 Mohamed Al Thameem M. All rights reserved.</div>
+    <div class="bios-line"       id="b2">&nbsp;</div>
+    <div class="bios-line"       id="b3">CPU: MERN-CORE @ 3.6 GHz (8 cores)   &nbsp;&nbsp; RAM: 8192 MB</div>
+    <div class="bios-line dim"   id="b4">Initialising storage controllers ... <span class="green">OK</span></div>
+    <div class="bios-line dim"   id="b5">Mounting skill modules ............... <span class="green">OK</span></div>
+    <div class="bios-line dim"   id="b6">Loading cert chain (Microsoft · MongoDB · AA) ... <span class="green">OK</span></div>
+    <div class="bios-line cyan"  id="b7">Detected: React · Node.js · Express.js · MongoDB · Python · C++</div>
+    <div class="bios-line"       id="b8">&nbsp;</div>
+    <div class="bios-line amber" id="b9">Booting portfolio kernel ...</div>
+    <div id="bios-bar"></div>
+    <div id="bios-bar-label">Loading: <span id="bios-bar-pct">0</span>%&nbsp;&nbsp;<span id="bios-cursor"></span></div>
+  </div>
+</div>
+
+<!-- ══ NAVBAR ══ -->
+<nav id="navbar">
+  <div class="nav-brand">MAT_OS&nbsp;&nbsp;/&nbsp;&nbsp;portfolio.sh</div>
+  <div class="nav-links">
+    <a href="#skills">    <span class="prefix">01.</span>Skills</a>
+    <a href="#experience"><span class="prefix">02.</span>Experience</a>
+    <a href="#projects">  <span class="prefix">03.</span>Projects</a>
+    <a href="#contact">   <span class="prefix">04.</span>Contact</a>
+    <div id="nav-clock">--:--:--</div>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-prompt">
+    <span>root@althameem</span>:~/portfolio$&nbsp; whoami
+  </div>
+  <h1 class="hero-name glitch" data-text="MOHAMED AL THAMEEM">MOHAMED AL THAMEEM</h1>
+  <p class="hero-role">Full-Stack Web Developer &nbsp;/&nbsp; MERN Stack</p>
+  <div class="hero-terminal">
+    <div class="term-titlebar">
+      <span class="term-dot r"></span>
+      <span class="term-dot y"></span>
+      <span class="term-dot g"></span>
+      <span class="term-title">bash — althameem@dev: ~/portfolio</span>
+    </div>
+    <div class="term-body">
+      <div class="term-line">
+        <span class="term-ps1">
+          <span class="at">althameem</span>@<span class="path">~/portfolio</span>&nbsp;$&nbsp;
+        </span>
+        <span id="typing-output"></span><span id="typing-cursor"></span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-links">
+    <a href="mailto:mdalthameem07@gmail.com" class="btn btn-green">▶&nbsp; Email Me</a>
+    <a href="https://linkedin.com" target="_blank" class="btn btn-cyan">▶&nbsp; LinkedIn</a>
+    <a href="tel:+919940263289" class="btn btn-green">▶&nbsp; +91 99402 63289</a>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ══ SKILLS ══ -->
+<section id="skills">
+  <div class="section-label">Skills.json</div>
+  <h2 class="section-title reveal">TECH<span> STACK</span></h2>
+  <div class="skills-grid">
+    <div class="skill-card c-green reveal">
+      <div class="skill-card-cat">Frontend</div>
+      <div class="skill-tags">
+        <span class="skill-tag">HTML5</span>
+        <span class="skill-tag">CSS3</span>
+        <span class="skill-tag">JavaScript</span>
+        <span class="skill-tag">React</span>
+      </div>
+    </div>
+    <div class="skill-card c-cyan reveal">
+      <div class="skill-card-cat">Backend</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Node.js</span>
+        <span class="skill-tag">Express.js</span>
+      </div>
+    </div>
+    <div class="skill-card c-amber reveal">
+      <div class="skill-card-cat">Databases</div>
+      <div class="skill-tags">
+        <span class="skill-tag">MongoDB</span>
+        <span class="skill-tag">MySQL</span>
+        <span class="skill-tag">DBMS</span>
+        <span class="skill-tag">RDBMS</span>
+      </div>
+    </div>
+    <div class="skill-card c-green reveal">
+      <div class="skill-card-cat">Languages</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Python</span>
+        <span class="skill-tag">C++</span>
+      </div>
+    </div>
+    <div class="skill-card c-cyan reveal">
+      <div class="skill-card-cat">Concepts</div>
+      <div class="skill-tags">
+        <span class="skill-tag">OOP</span>
+        <span class="skill-tag">Data Structures</span>
+        <span class="skill-tag">Operating Systems</span>
+      </div>
+    </div>
+    <div class="skill-card c-amber reveal">
+      <div class="skill-card-cat">Certifications</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Microsoft</span>
+        <span class="skill-tag">MongoDB</span>
+        <span class="skill-tag">Automation Anywhere</span>
+        <span class="skill-tag">Celonis</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ══ EXPERIENCE ══ -->
+<section id="experience">
+  <div class="section-label">experience.log</div>
+  <h2 class="section-title reveal">TRAINING &amp;<span> CERTS</span></h2>
+  <div class="timeline">
+
+    <div class="timeline-item c-green reveal">
+      <div class="tl-date">Jan 2026 – Feb 2026</div>
+      <div class="tl-title">Full-Stack (MERN) Development Traineeship</div>
+      <div class="tl-org">Maiyyam · Virtual</div>
+      <div class="tl-note">Hands-on full-stack development with React, Node.js, Express and MongoDB. Built end-to-end web applications under mentorship.</div>
+      <span class="tl-badge">★ Letter of Recommendation</span>
+    </div>
+
+    <div class="timeline-item c-cyan reveal">
+      <div class="tl-date">Sep 2025 – Mar 2026</div>
+      <div class="tl-title">Essentials Automation Professional</div>
+      <div class="tl-org">Automation Anywhere · Virtual</div>
+      <div class="tl-note">Robotic process automation fundamentals, bot design, and enterprise automation workflows.</div>
+    </div>
+
+    <div class="timeline-item c-amber reveal">
+      <div class="tl-date">Sep 2025 – Mar 2026</div>
+      <div class="tl-title">Self-Presentation &amp; Problem Solving</div>
+      <div class="tl-org">Wadhwani Foundation · Virtual</div>
+      <div class="tl-note">Professional communication skills, structured problem solving, and innovation frameworks for tech careers.</div>
+    </div>
+
+    <div class="timeline-item c-green reveal">
+      <div class="tl-date">Sep 2025</div>
+      <div class="tl-title">Cybersecurity Concepts</div>
+      <div class="tl-org">Microsoft · Virtual</div>
+      <div class="tl-note">Core cybersecurity principles, threat landscapes, and defensive strategies. Microsoft certified.</div>
+    </div>
+
+    <div class="timeline-item c-cyan reveal">
+      <div class="tl-date">Jun 2025</div>
+      <div class="tl-title">MongoDB Basics for Students</div>
+      <div class="tl-org">MongoDB · Virtual</div>
+      <div class="tl-note">Document model, CRUD operations, aggregation pipelines, and indexing strategies in MongoDB Atlas.</div>
+    </div>
+
+    <div class="timeline-item c-amber reveal">
+      <div class="tl-date">Mar 2025</div>
+      <div class="tl-title">Academic Process Mining Fundamentals</div>
+      <div class="tl-org">Celonis · Virtual</div>
+      <div class="tl-note">Process discovery, conformance checking, and enhancement using process mining techniques.</div>
+    </div>
+
+    <div class="timeline-item reveal">
+      <div class="tl-date">Jan 2025</div>
+      <div class="tl-title">Master Data Management for Beginners</div>
+      <div class="tl-org">TCS iON · Virtual</div>
+      <div class="tl-note">Data governance, data quality management, and master data management best practices.</div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ══ PROJECTS ══ -->
+<section id="projects">
+  <div class="section-label">projects.sh --list</div>
+  <h2 class="section-title reveal">FEATURED<span> BUILDS</span></h2>
+  <div class="projects-grid">
+
+    <div class="project-card reveal">
+      <div class="project-card-header">
+        <span class="project-num">01</span>
+        <span class="project-icon">🛒</span>
+      </div>
+      <div class="project-card-body">
+        <div class="project-name">E-Commerce Platform</div>
+        <div class="project-desc">Full-stack shopping application with user auth, product catalogue, cart management, and order processing built on the MERN stack.</div>
+        <div class="project-stack">
+          <span class="stack-tag g">React</span>
+          <span class="stack-tag g">Node.js</span>
+          <span class="stack-tag c">Express.js</span>
+          <span class="stack-tag a">MongoDB</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-card-header">
+        <span class="project-num">02</span>
+        <span class="project-icon">📋</span>
+      </div>
+      <div class="project-card-body">
+        <div class="project-name">Task Management App</div>
+        <div class="project-desc">Real-time collaborative todo and task tracker with team workspaces, priority labels, and deadline notifications.</div>
+        <div class="project-stack">
+          <span class="stack-tag g">React</span>
+          <span class="stack-tag c">Node.js</span>
+          <span class="stack-tag a">MongoDB</span>
+          <span class="stack-tag g">REST API</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-card-header">
+        <span class="project-num">03</span>
+        <span class="project-icon">🌐</span>
+      </div>
+      <div class="project-card-body">
+        <div class="project-name">Portfolio Terminal OS</div>
+        <div class="project-desc">This very portfolio — a hacker-OS themed website with a BIOS boot sequence, interactive terminal, glitch animations, and live clock.</div>
+        <div class="project-stack">
+          <span class="stack-tag g">HTML5</span>
+          <span class="stack-tag c">CSS3</span>
+          <span class="stack-tag a">Vanilla JS</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-card-header">
+        <span class="project-num">04</span>
+        <span class="project-icon">🤖</span>
+      </div>
+      <div class="project-card-body">
+        <div class="project-name">RPA Automation Bot</div>
+        <div class="project-desc">Automation Anywhere bot automating repetitive data-entry workflows, reducing manual effort by eliminating repetitive business processes.</div>
+        <div class="project-stack">
+          <span class="stack-tag a">Automation Anywhere</span>
+          <span class="stack-tag g">Python</span>
+          <span class="stack-tag c">RPA</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ══ CONTACT ══ -->
+<section id="contact">
+  <div class="section-label">contact.sh</div>
+  <h2 class="section-title reveal">GET IN<span> TOUCH</span></h2>
+  <p style="color:var(--text-dim);font-size:13px;margin-top:-32px;margin-bottom:40px;max-width:520px;">
+    Type <code style="color:var(--green)">help</code> to see available commands, or just say hi.
+  </p>
+  <div id="contact-terminal" class="reveal">
+    <div id="ct-titlebar">
+      <span class="term-dot r"></span>
+      <span class="term-dot y"></span>
+      <span class="term-dot g"></span>
+      <span class="term-title">contact@althameem — interactive shell</span>
+    </div>
+    <div id="ct-body">
+      <div class="ct-out g">Welcome to the Contact Terminal v1.0</div>
+      <div class="ct-out d">Type 'help' for available commands.</div>
+      <div class="ct-out">&nbsp;</div>
+    </div>
+    <div id="ct-input-row">
+      <span class="ct-ps1"><span class="at">visitor</span>@<span class="path">contact</span> $&nbsp;</span>
+      <input id="ct-input" type="text" autocomplete="off" spellcheck="false" placeholder="type a command...">
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <span>© 2026</span>&nbsp; Mohamed Al Thameem M &nbsp;·&nbsp; Chennai, India
+  <span style="color:var(--text-dim)">Built with&nbsp;<span>♥</span>&nbsp;and too much caffeine</span>
+  <span style="color:var(--text-dim)" id="footer-status">[ STATUS: <span>ONLINE</span> ]</span>
+</footer>
+
+<!-- ══ SCRIPTS ══ -->
+<script>
+/* ─── BIOS BOOT ─── */
+(function() {
+  const lines = ['b0','b1','b2','b3','b4','b5','b6','b7','b8','b9'];
+  const delays = [0, 220, 380, 420, 620, 820, 1020, 1200, 1350, 1480];
+  const speeds = [28,24,0,22,20,20,18,20,0,24];
+
+  function typeLine(id, speed, cb) {
+    const el = document.getElementById(id);
+    if (!el) { cb && cb(); return; }
+    const text = el.textContent;
+    el.textContent = '';
+    el.style.width = 'auto';
+    let i = 0;
+    if (speed === 0) { el.textContent = text; el.style.width = 'auto'; cb && cb(); return; }
+    const iv = setInterval(() => {
+      el.textContent += text[i++];
+      if (i >= text.length) { clearInterval(iv); cb && cb(); }
+    }, speed);
+  }
+
+  function runLines(idx) {
+    if (idx >= lines.length) { startBar(); return; }
+    setTimeout(() => {
+      typeLine(lines[idx], speeds[idx], () => runLines(idx + 1));
+    }, idx === 0 ? delays[0] : delays[idx] - delays[idx-1]);
+  }
+
+  function startBar() {
+    const bar = document.getElementById('bios-bar');
+    const pct = document.getElementById('bios-bar-pct');
+    let p = 0;
+    const iv = setInterval(() => {
+      p += Math.random() * 4 + 1;
+      if (p >= 100) { p = 100; clearInterval(iv); setTimeout(endBios, 400); }
+      bar.style.width = p + '%';
+      pct.textContent = Math.floor(p);
+    }, 60);
+  }
+
+  function endBios() {
+    const bios = document.getElementById('bios');
+    bios.style.transition = 'opacity 0.6s';
+    bios.style.opacity = '0';
+    setTimeout(() => {
+      bios.style.display = 'none';
+      document.getElementById('navbar').classList.add('visible');
+      startTyping();
+    }, 650);
+  }
+
+  runLines(0);
+})();
+
+/* ─── CLOCK ─── */
+function updateClock() {
+  const now = new Date();
+  const p = n => String(n).padStart(2,'0');
+  document.getElementById('nav-clock').textContent =
+    p(now.getHours()) + ':' + p(now.getMinutes()) + ':' + p(now.getSeconds());
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* ─── HERO TYPING ─── */
+function startTyping() {
+  const messages = [
+    'cat about.txt',
+    '\n> Name   : Mohamed Al Thameem M\n> Role   : Full-Stack Web Developer\n> Stack  : React · Node.js · Express · MongoDB\n> City   : Chennai, India\n> Status : [ OPEN TO OPPORTUNITIES ]',
+    '',
+  ];
+  const el = document.getElementById('typing-output');
+  let mi = 0, ci = 0, phase = 'type';
+
+  function tick() {
+    if (mi >= messages.length) { mi = 0; el.textContent = ''; ci = 0; }
+    const msg = messages[mi];
+    if (phase === 'type') {
+      if (ci < msg.length) {
+        el.textContent += msg[ci++];
+        setTimeout(tick, msg[ci-1] === '\n' ? 60 : 38);
+      } else {
+        phase = 'wait';
+        setTimeout(() => { phase = 'erase'; tick(); }, mi === 0 ? 900 : 2800);
+      }
+    } else if (phase === 'erase') {
+      if (el.textContent.length > 0) {
+        el.textContent = el.textContent.slice(0, -1);
+        setTimeout(tick, 18);
+      } else {
+        mi++;
+        ci = 0;
+        phase = 'type';
+        setTimeout(tick, 400);
+      }
+    }
+  }
+  tick();
+}
+
+/* ─── SCROLL REVEAL ─── */
+const reveals = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      e.target.style.animationDelay = (i * 0.04) + 's';
+      e.target.classList.add('visible');
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+reveals.forEach(r => obs.observe(r));
+
+/* ─── CONTACT TERMINAL ─── */
+const ctBody  = document.getElementById('ct-body');
+const ctInput = document.getElementById('ct-input');
+
+const CMD = {
+  help: () => [
+    { t:'', c:'g' },
+    { t:'Available commands:', c:'g' },
+    { t:'  email     → Open email client', c:'' },
+    { t:'  phone     → Show phone number', c:'' },
+    { t:'  linkedin  → LinkedIn profile URL', c:'' },
+    { t:'  location  → Current city', c:'' },
+    { t:'  skills    → List tech skills', c:'' },
+    { t:'  status    → Availability for hire', c:'' },
+    { t:'  clear     → Clear terminal', c:'' },
+    { t:'  whoami    → About me summary', c:'' },
+    { t:'', c:'' },
+  ],
+  email: () => [
+    { t:'mdalthameem07@gmail.com', c:'c' },
+    { t:'Opening mail client...', c:'d' },
+  ],
+  phone: () => [
+    { t:'+91 9940263289', c:'a' },
+    { t:'Chennai, India', c:'d' },
+  ],
+  linkedin: () => [
+    { t:'https://linkedin.com/in/mdalthameem', c:'c' },
+  ],
+  location: () => [
+    { t:'📍 Chennai, Tamil Nadu, India', c:'a' },
+  ],
+  skills: () => [
+    { t:'FRONTEND  → HTML · CSS · JavaScript · React', c:'g' },
+    { t:'BACKEND   → Node.js · Express.js', c:'c' },
+    { t:'DATABASE  → MongoDB · MySQL', c:'a' },
+    { t:'LANGUAGES → Python · C++', c:'g' },
+    { t:'CONCEPTS  → OOP · Data Structures · OS', c:'c' },
+  ],
+  status: () => [
+    { t:'[ STATUS: OPEN TO OPPORTUNITIES ]', c:'g' },
+    { t:'Actively seeking full-stack / frontend roles.', c:'' },
+    { t:'Available immediately. Chennai preferred, remote ok.', c:'d' },
+  ],
+  whoami: () => [
+    { t:'Mohamed Al Thameem M', c:'g' },
+    { t:'Aspiring full-stack developer (MERN). BCA student at The New College,', c:'' },
+    { t:'Chennai. Certified by Microsoft, MongoDB & Automation Anywhere.', c:'' },
+    { t:'Letter of Recommendation from Maiyyam traineeship (Jan–Feb 2026).', c:'d' },
+  ],
+  clear: () => 'CLEAR',
+};
+
+function ctPrint(lines) {
+  lines.forEach(l => {
+    const d = document.createElement('div');
+    d.className = 'ct-out' + (l.c ? ' ' + l.c : '');
+    d.textContent = l.t || '\u00a0';
+    ctBody.appendChild(d);
+  });
+  ctBody.scrollTop = ctBody.scrollHeight;
+}
+
+function ctEcho(cmd) {
+  const d = document.createElement('div');
+  d.className = 'ct-out';
+  d.innerHTML = '<span style="color:var(--green)">visitor@contact $</span> ' + cmd;
+  ctBody.appendChild(d);
+}
+
+ctInput.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const raw = ctInput.value.trim();
+  ctInput.value = '';
+  if (!raw) return;
+  ctEcho(raw);
+  const cmd = raw.toLowerCase();
+  if (CMD[cmd]) {
+    const res = CMD[cmd]();
+    if (res === 'CLEAR') {
+      ctBody.innerHTML = '';
+      ctPrint([{ t:'Terminal cleared.', c:'d' }]);
+    } else {
+      ctPrint(res);
+      if (cmd === 'email') setTimeout(() => window.location.href='mailto:mdalthameem07@gmail.com', 400);
+    }
+  } else {
+    ctPrint([{ t: 'bash: ' + raw + ': command not found. Type \'help\'.', c:'r' }]);
+  }
+  ctBody.scrollTop = ctBody.scrollHeight;
+});
+
+ctInput.addEventListener('focus', () => ctInput.placeholder = '');
+ctInput.addEventListener('blur', () => ctInput.placeholder = 'type a command...');
+</script>
+</body>
+</html>
